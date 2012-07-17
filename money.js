@@ -3,113 +3,110 @@
 // author: Shengying Pan
 // license: MIT
 // moneyjs.shengyingpan.com
+(function (Number, undefined) {
 
-var Money = function (decimal) {
-    this.negative = decimal < 0 : true : false;
-    this.absolute = Math.abs(decimal);
-    this.decimal = decimal;
-}
-
-var money = function (lang){
-    this.lang = lang.toLowerCase();
-}
-
-var StringFunction = function (integer, fraction, isNegative, fractionDigits){
-    
-}
-
-var stringFunctions = {
-    //x is the number of digits after the decimal point
-    "en": function (money, x) { 
-        var symbol = "$";
-        var result = minus ? "-" : "";
-        result += symbol;
-        var str = money.absolute.toFixed(x).toString();
-        var length = str.indexOf(".");
-        if (length < 0) length = str.length;
-        var extra = str.substr(length);
-        for (var i = 0; i < length; i++) {
-            result += str.charAt(i);
-            if ((str.length - i - 1) % 3 == 0 && i != str.length - 1) {
-                result += ",";
-            }
+    //This is the Money Object
+    var Money = function (decimal) {
+        if (!(decimal < 0 || decimal >= 0)) {
+            decimal = parseFloat(decimal);
         }
-        result += extra;
-        return result;
-    },
-    "fr": function (money, x) { 
-        var symbol = "€";
-    }
-};
-
-Money.prototype.toString = function(x){
-    //x is the number of digits after the decimal point
-    x = x == null ? 0 : x; //by default, there is no fraction
-
-    var integer = Math.round(this.absolute);
-    var fraction = this.absolute - integer;
-
-    switch(money.lang){
-        case "fr":
-            return stringFunctions["fr"](integer, fraction, this.negative, x);
-            break;
-        default:
-            return stringFunctions["en"](integer, fraction, this.negative, x);
-            break;
-    }
-}
-
-
-Money.prototype.toString = function (x) {
-    //x is the number of digits after the decimal point    
-    //concrete display functions
-    var toMoneyEn = function (m) {
-        var symbol = "$";
-        var minus = m < 0 ? true : false;
-        m = Math.abs(m);
-        var result = minus ? "-" : "";
-        result += symbol;
-        var str = m.toString();
-        var length = str.indexOf(".");
-        if (length < 0) length = str.length;
-        var extra = str.substr(length);
-        for (var i = 0; i < length; i++) {
-            result += str.charAt(i);
-            if ((str.length - i - 1) % 3 == 0 && i != str.length - 1) {
-                result += ",";
-            }
-        }
-        result += extra;
-        return result;
+        this.negative = decimal < 0 ? true : false;
+        this.absolute = Math.abs(decimal);
+        this.decimal = decimal;
     };
-    var toMoneyFr = function (m) {
-        var symbol = " €";
-        var minus = m < 0 ? true : false;
-        m = Math.abs(m);
-        var result = minus ? "-" : "";
-        var str = m.toString();
-        var length = str.indexOf(".");
-        if (length < 0) length = str.length;
-        var extra = str.substr(length);
-        for (var i = 0; i < length; i++) {
-            result += str.charAt(i);
-            if ((str.length - i - 1) % 3 == 0 && i != str.length - 1) {
-                result += " ";
+
+
+    //Languages
+    var currentLanguage = "en";
+    var languages = {
+        "en": {
+            negativePattern: "-$n",
+            positivePattern: "$n",
+            decimalSymbol: ".",
+            decimalDigits: 2,
+            groupingSymbol: ",",
+            groupingDigits: 3,
+        },
+        "fr": {
+
+        },
+        "fr-ca": {
+
+        }
+    };
+
+    var money = function (input) {
+        if (input === null || input === "") {
+            return null;
+        }
+        return new Money(input);
+    };
+
+    //This is the money function which helps us load the localization setting
+    money.lang = function (key) {
+        if (!key) {
+            //getting current language
+            return currentLanguage;
+        }
+
+        //fall back to default, which is en
+        currentLanguage = "en";
+
+        key = key.toLowerCase();
+        if (languages[key] !== undefined) {
+            currentLanguage = key;
+        }
+        else if (key.indexOf("-") > 0) {
+            var main = key.substr(0, key.indexOf("-"));
+            if (languages[main] !== undefined) {
+                currentLanguage = key;
             }
         }
-        result += extra;
-        return result.replace(".", ",") + symbol;
+
+        return currentLanguage;
     };
-    x = x == null ? 0 : x;
-    var money = this.decimal;
-    money = parseFloat(money);
-    money = money.toFixed(x);
-    switch (i18n.getLanguageCode()) {
-        case "fr":
-            return toMoneyFr(money);
-            break;
-        default:
-            return toMoneyEn(money);
-            break;
-    }
-};
+
+    Money.prototype.toString = function (x) {
+        //x is the fraction digits
+        var language = languages[currentLanguage];
+        if (x === null) x = language.decimalDigits;
+        if (x > language.decimalDigits) {
+            x = language.decimalDigits;
+        }
+        if (x < 0) {
+            x = 0;
+        }
+
+        var integerStr = "", fractionStr = "";
+        var integer = Math.round(this.absolute);
+        var fraction = this.absolute - integer;
+        integer = integer.toFixed(0).toString();
+        fraction = fraction.toFixed(language.decimalDigits).toString();
+
+        for (var i = 0; i < integer.length; i++) {
+            integerStr += integer.charAt(i);
+            if ((integer.length - i - 1) % language.groupingDigits == 0 && i != integer.length - 1) {
+                integerStr += language.groupingSymbol;
+            }
+        }
+
+        var fractionStr = fraction; //It may possibly be extended for some irregular currency
+
+        var numberStr = integerStr;
+
+        if (x > 0) {
+            numberStr += language.decimalSymbol + fraction;
+        }
+
+        if (this.negative) {
+            //display according to negative pattern
+            return language.negativePattern.replace(/n/g, numberStr);
+        }
+        else {
+            //positive pattern instead
+            return language.positivePattern.replace(/n/g, numberStr);
+        }
+
+    };
+
+})(Number);
