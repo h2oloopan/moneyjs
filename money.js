@@ -7,6 +7,7 @@
 
     //This is the Money Object
     var Money = function (decimal) {
+
         if (!(decimal < 0 || decimal >= 0)) {
             decimal = parseFloat(decimal);
         }
@@ -14,7 +15,6 @@
         this.absolute = Math.abs(decimal);
         this.decimal = decimal;
     };
-
 
     //Languages
     var currentLanguage = "en";
@@ -53,12 +53,12 @@
         currentLanguage = "en";
 
         key = key.toLowerCase();
-        if (languages[key] !== undefined) {
+        if (typeof languages[key] !== "undefined") {
             currentLanguage = key;
         }
         else if (key.indexOf("-") > 0) {
             var main = key.substr(0, key.indexOf("-"));
-            if (languages[main] !== undefined) {
+            if (typeof languages[main] !== "undefined") {
                 currentLanguage = key;
             }
         }
@@ -69,7 +69,7 @@
     Money.prototype.toString = function (x) {
         //x is the fraction digits
         var language = languages[currentLanguage];
-        if (x === null) x = language.decimalDigits;
+        if (x == null) x = language.decimalDigits;
         if (x > language.decimalDigits) {
             x = language.decimalDigits;
         }
@@ -90,12 +90,11 @@
             }
         }
 
-        var fractionStr = fraction; //It may possibly be extended for some irregular currency
-
+        var fractionStr = fraction.substr(fraction.indexOf(".") + 1); //It may possibly be extended for some irregular currency
         var numberStr = integerStr;
 
         if (x > 0) {
-            numberStr += language.decimalSymbol + fraction;
+            numberStr += language.decimalSymbol + fractionStr;
         }
 
         if (this.negative) {
@@ -108,5 +107,23 @@
         }
 
     };
+
+    //assume CommonJS
+    if (typeof require !== "undefined" &&
+	     typeof exports !== "undefined" &&
+	     typeof module !== "undefined") {
+        module.exports = money;
+    }
+    else {
+        //to global variable
+        window.money = money;
+    }
+
+    //assume global define
+    if (typeof define === "function" && define.amd) {
+        define("money", [], function () {
+            return money;
+        });
+    }
 
 })(Number);
