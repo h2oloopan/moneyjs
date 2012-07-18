@@ -25,13 +25,23 @@
             decimalSymbol: ".",
             decimalDigits: 2,
             groupingSymbol: ",",
-            groupingDigits: 3,
+            groupingDigits: 3
         },
         "fr": {
-
+            negativePattern: "-n €",
+            positivePattern: "n €",
+            decimalSymbol: ",",
+            decimalDigits: 2,
+            groupingSymbol: " ",
+            groupingDigits: 3
         },
         "fr-ca": {
-
+            negativePattern: "-n $",
+            positivePattern: "n $",
+            decimalSymbol: ",",
+            decimalDigits: 2,
+            groupingSymbol: " ",
+            groupingDigits: 3
         }
     };
 
