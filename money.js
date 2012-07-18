@@ -1,5 +1,5 @@
 // money.js
-// version: 1.0.0
+// version: 1.0.1
 // author: Shengying Pan
 // license: MIT
 // moneyjs.shengyingpan.com
