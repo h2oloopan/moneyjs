@@ -1,5 +1,5 @@
-// money.js
-// version: 1.0.0
+﻿// money.js
+// version: 1.0.2
 // author: Shengying Pan
 // license: MIT
 // moneyjs.shengyingpan.com
@@ -7,10 +7,6 @@
 
     //This is the Money Object
     var Money = function (decimal) {
-
-        if (!(decimal < 0 || decimal >= 0)) {
-            decimal = parseFloat(decimal);
-        }
         this.negative = decimal < 0 ? true : false;
         this.absolute = Math.abs(decimal);
         this.decimal = decimal;
@@ -49,6 +45,9 @@
         if (input === null || input === "") {
             return null;
         }
+        if (typeof input !== "number") {
+            input = parseFloat(input);
+        }
         return new Money(input);
     };
 
@@ -69,7 +68,7 @@
         else if (key.indexOf("-") > 0) {
             var main = key.substr(0, key.indexOf("-"));
             if (typeof languages[main] !== "undefined") {
-                currentLanguage = key;
+                currentLanguage = main;
             }
         }
 
