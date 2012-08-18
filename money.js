@@ -2,7 +2,7 @@
 // version: 1.0.2
 // author: Shengying Pan
 // license: MIT
-// moneyjs.shengyingpan.com
+// http://projects.shengyingpan.com/moneyjs
 (function (Number, undefined) {
 
     //This is the Money Object
