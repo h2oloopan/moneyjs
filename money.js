@@ -32,7 +32,7 @@
             groupingDigits: 3
         },
         "fr-ca": {
-            negativePattern: "-n $",
+            negativePattern: "(n $)",
             positivePattern: "n $",
             decimalSymbol: ",",
             decimalDigits: 2,
