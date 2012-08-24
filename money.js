@@ -1,5 +1,5 @@
 ﻿// money.js
-// version: 1.0.2
+// version: 1.0.3
 // author: Shengying Pan
 // license: MIT
 // moneyjs.shengyingpan.com
@@ -16,24 +16,24 @@
     var currentLanguage = "en";
     var languages = {
         "en": {
-            negativePattern: "-$n",
             positivePattern: "$n",
+            negativePattern: "-$n",
             decimalSymbol: ".",
             decimalDigits: 2,
             groupingSymbol: ",",
             groupingDigits: 3
         },
         "fr": {
-            negativePattern: "-n €",
             positivePattern: "n €",
+            negativePattern: "-n €",
             decimalSymbol: ",",
             decimalDigits: 2,
             groupingSymbol: " ",
             groupingDigits: 3
         },
         "fr-ca": {
-            negativePattern: "(n $)",
             positivePattern: "n $",
+            negativePattern: "(n $)",
             decimalSymbol: ",",
             decimalDigits: 2,
             groupingSymbol: " ",
@@ -78,7 +78,7 @@
     Money.prototype.toString = function (x) {
         //x is the fraction digits
         var language = languages[currentLanguage];
-        if (x == null) x = language.decimalDigits;
+        if (typeof x !== "number") x = language.decimalDigits;
         if (x > language.decimalDigits) {
             x = language.decimalDigits;
         }
@@ -87,10 +87,13 @@
         }
 
         var integerStr = "", fractionStr = "";
-        var integer = Math.round(this.absolute);
-        var fraction = this.absolute - integer;
-        integer = integer.toFixed(0).toString();
-        fraction = fraction.toFixed(language.decimalDigits).toString();
+
+        var number = this.absolute.toFixed(x);
+
+        var integer = Math.floor(number);
+        var fraction = (number - integer).toFixed(x);
+        integer = integer.toString();
+        fraction = fraction.toString();
 
         for (var i = 0; i < integer.length; i++) {
             integerStr += integer.charAt(i);
@@ -99,7 +102,7 @@
             }
         }
 
-        var fractionStr = fraction.substr(fraction.indexOf(".") + 1); //It may possibly be extended for some irregular currency
+        fractionStr = fraction.substr(fraction.indexOf(".") + 1); //It may possibly be extended for some irregular currency
         var numberStr = integerStr;
 
         if (x > 0) {
