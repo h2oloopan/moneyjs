@@ -1,5 +1,5 @@
 ﻿// money.js
-// version: 1.0.3
+// version: 1.0.4
 // author: Shengying Pan
 // license: MIT
 // moneyjs.shengyingpan.com
@@ -18,6 +18,14 @@
         "en": {
             positivePattern: "$n",
             negativePattern: "-$n",
+            decimalSymbol: ".",
+            decimalDigits: 2,
+            groupingSymbol: ",",
+            groupingDigits: 3
+        },
+        "en-gb": {
+            positivePattern: "£n",
+            negativePattern: "-£n",
             decimalSymbol: ".",
             decimalDigits: 2,
             groupingSymbol: ",",
