@@ -1,9 +1,8 @@
 ﻿// money.js
-// version: 1.0.4
+// version: 1.1.0
 // author: Shengying Pan
 // license: MIT
-// moneyjs.shengyingpan.com
-(function (Number, undefined) {
+(function (undefined) {
 
     //This is the Money Object
     var Money = function (decimal) {
@@ -16,6 +15,7 @@
     var currentLanguage = "en";
     var languages = {
         "en": {
+            symbol: "$",
             positivePattern: "$n",
             negativePattern: "-$n",
             decimalSymbol: ".",
@@ -24,6 +24,7 @@
             groupingDigits: 3
         },
         "en-gb": {
+            symbol: "£",
             positivePattern: "£n",
             negativePattern: "-£n",
             decimalSymbol: ".",
@@ -32,6 +33,7 @@
             groupingDigits: 3
         },
         "fr": {
+            symbol: "€",
             positivePattern: "n €",
             negativePattern: "-n €",
             decimalSymbol: ",",
@@ -40,6 +42,7 @@
             groupingDigits: 3
         },
         "fr-ca": {
+            symbol: "$",
             positivePattern: "n $",
             negativePattern: "(n $)",
             decimalSymbol: ",",
@@ -51,12 +54,20 @@
 
     var money = function (input) {
         if (input === null || input === "") {
-            return null;
+            return new Money(0);
         }
         if (typeof input !== "number") {
             input = parseFloat(input);
         }
         return new Money(input);
+    };
+
+    //parsing function
+    money.parse = function (input) {
+        var language = languages[currentLanguage];
+        //convert it back to default English culture
+        input = input.replace(" ", "").replace(language.symbol, "").replace(language.groupingSymbol, "").replace(language.decimalSymbol, ".");
+        return new Money(parseFloat(input));
     };
 
     //This is the money function which helps us load the localization setting
@@ -81,6 +92,10 @@
         }
 
         return currentLanguage;
+    };
+
+    money.prototype.toDecimal = function () {
+        return this.decimal;
     };
 
     Money.prototype.toString = function (x) {
@@ -128,22 +143,18 @@
 
     };
 
-    //assume CommonJS
-    if (typeof require !== "undefined" &&
-	     typeof exports !== "undefined" &&
-	     typeof module !== "undefined") {
+    //Expose
+    if (hasModule) {
         module.exports = money;
     }
-    else {
-        //to global variable
-        window.money = money;
+
+    if (typeof ender === "undefined") {
+        this["money"] = money;
     }
 
-    //assume global define
     if (typeof define === "function" && define.amd) {
         define("money", [], function () {
             return money;
         });
     }
-
-})(Number);
+}).call(this);
