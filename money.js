@@ -144,7 +144,7 @@
     };
 
     //Expose
-    if (hasModule) {
+    if (typeof require !== "undefined" && typeof exports !== "undefined" && typeof module !== "undefined") {
         module.exports = money;
     }
 
