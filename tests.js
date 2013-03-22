@@ -22,9 +22,18 @@ exports.testDisplayCanadianFrenchLocale = function (test) {
 
 exports.testParseEnglishLocale = function (test) {
     money.lang('en');
-    var input = '234,230.22';
+    var input = '$234,230.22';
     var output = money.parse(input).toDecimal();
 
     test.equal(output, 234230.22, 'The converted number should match');
     test.done();
 };
+
+exports.testParseEnglishLocalePlainFormat = function (test) {
+    money.lang('en');
+    var input = '22222.33';
+    var output = money.parse(input).toDecimal();
+
+    test.equal(output, 22222.33, 'The converted number should match');
+    test.done();
+}
