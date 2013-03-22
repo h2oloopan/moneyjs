@@ -94,7 +94,7 @@
         return currentLanguage;
     };
 
-    money.prototype.toDecimal = function () {
+    Money.prototype.toDecimal = function () {
         return this.decimal;
     };
 
