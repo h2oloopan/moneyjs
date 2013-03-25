@@ -99,6 +99,12 @@
     };
 
     Money.prototype.toString = function (x) {
+	//-1 is a special one display up to decimal number fraction, but hide trailing 0s
+	var flexible = false;
+	if (x == -1) {
+	    flexible = true;
+	}	
+
         //x is the fraction digits
         var language = languages[currentLanguage];
         if (typeof x !== "number") x = language.decimalDigits;
@@ -106,7 +112,7 @@
             x = language.decimalDigits;
         }
         if (x < 0) {
-            x = 0;
+            x = language.decimalDigits;
         }
 
         var integerStr = "", fractionStr = "";
@@ -126,10 +132,16 @@
         }
 
         fractionStr = fraction.substr(fraction.indexOf(".") + 1); //It may possibly be extended for some irregular currency
+	    if (fractionStr.length > 0 && flexible) {
+            while (fractionStr[fractionStr.length - 1] == "0") {
+                fractionStr = fractionStr.substr(0, fractionStr.length - 1);
+            }
+        }
+
         var numberStr = integerStr;
 
         if (x > 0) {
-            numberStr += language.decimalSymbol + fractionStr;
+            numberStr += (fractionStr.length > 0 ? language.decimalSymbol : "") + fractionStr;
         }
 
         if (this.negative) {
