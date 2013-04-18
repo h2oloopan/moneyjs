@@ -63,11 +63,23 @@
     };
 
     //parsing function
+    //will return null if input cannot be parsed
+    //it's very basic will not enforce some special cases, e.g. grouping symbol at wrong position
     money.parse = function (input) {
+        if (input == null) return null;
         var language = languages[currentLanguage];
+        //trim
+        input = input.toString().replace(/^\s\s*/, "").replace(/\s\s*$/, "");
         //convert it back to default English culture
-        input = input.replace(" ", "").replace(language.symbol, "").replace(language.groupingSymbol, "").replace(language.decimalSymbol, ".");
-        return new Money(parseFloat(input));
+        regGroupingSymbol = new RegExp(language.groupingSymbol, "g");
+        input = input.toString().replace(language.symbol, "").replace(regGroupingSymbol, "");
+        if (language.symbol != "." && input.indexOf(".") >= 0) return null;
+        input = input.replace(language.decimalSymbol, ".");
+        //not a number
+        if (!(/^\d+\.?\d*$/).test(input)) return null;
+        decimal = parseFloat(input);
+        if (isNaN(decimal)) return null;
+        return new Money(decimal);
     };
 
     //This is the money function which helps us load the localization setting
